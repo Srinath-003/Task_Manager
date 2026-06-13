@@ -92,10 +92,23 @@ router.patch("/topic", async (req, res) => {
 // DELETE task
 router.delete("/:id", async (req, res) => {
   try {
-    await Task.findByIdAndDelete(req.params.id);
+    const deletedTask = await Task.findOneAndDelete({
+      _id: req.params.id,
+      userId: req.body.userId
+    });
+
+    if (!deletedTask) {
+      return res.status(403).json({
+        message: "You cannot delete this task"
+      });
+    }
+
     res.json({ message: "Task deleted" });
   } catch (err) {
-    res.status(500).json({ message: "Failed to delete task", error: err.message });
+    res.status(500).json({
+      message: "Failed to delete task",
+      error: err.message
+    });
   }
 });
 
@@ -116,11 +129,23 @@ router.put("/:id", async (req, res) => {
       update.completed = req.body.completed;
     }
 
-    const updatedTask = await Task.findByIdAndUpdate(
-      req.params.id,
-      update,
-      { new: true, runValidators: true }
-    );
+    const updatedTask = await Task.findOneAndUpdate(
+  {
+    _id: req.params.id,
+    userId: req.body.userId
+  },
+  update,
+  {
+    new: true,
+    runValidators: true
+  }
+);
+
+if (!updatedTask) {
+  return res.status(403).json({
+    message: "You cannot update this task"
+  });
+}
 
     res.json(updatedTask);
   } catch (err) {

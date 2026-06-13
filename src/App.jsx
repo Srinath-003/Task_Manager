@@ -129,9 +129,12 @@ function App() {
     if (!selectedTask) return;
 
     try {
-      const res = await axios.put(`${API_URL}/${id}`, {
-        completed: !selectedTask.completed
-      });
+      const user = JSON.parse(sessionStorage.getItem("user"));
+
+const res = await axios.put(`${API_URL}/${id}`, {
+  completed: !selectedTask.completed,
+  userId: user.id
+});
 
       setTasks((currentTasks) =>
         currentTasks.map((item) => (item._id === id ? res.data : item))
@@ -145,7 +148,13 @@ function App() {
 
   const deleteTask = async (id) => {
     try {
-      await axios.delete(`${API_URL}/${id}`);
+      const user = JSON.parse(sessionStorage.getItem("user"));
+
+await axios.delete(`${API_URL}/${id}`, {
+  data: {
+    userId: user.id
+  }
+});
       setTasks((currentTasks) => currentTasks.filter((item) => item._id !== id));
       setError("");
     } catch (err) {
@@ -159,11 +168,20 @@ function App() {
     if (!text) return;
 
     try {
-      const res = await axios.put(`${API_URL}/${id}`, { text });
-      setTasks((currentTasks) =>
-        currentTasks.map((item) => (item._id === id ? res.data : item))
-      );
-      setError("");
+      const user = JSON.parse(sessionStorage.getItem("user"));
+
+const res = await axios.put(`${API_URL}/${id}`, {
+  text,
+  userId: user.id
+});
+
+setTasks((currentTasks) =>
+  currentTasks.map((item) =>
+    item._id === id ? res.data : item
+  )
+);
+
+setError("");
     } catch (err) {
       setError("Could not save your edit.");
       console.log(err);
