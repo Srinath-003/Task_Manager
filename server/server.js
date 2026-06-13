@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -31,7 +32,7 @@ app.get("/health", (req, res) => {
 const PORT = 5000;
 console.log("Trying to connect...");
 mongoose.connect(
-  "mongodb://srinath:sri167@ac-1wwbplk-shard-00-00.ljp40yo.mongodb.net:27017,ac-1wwbplk-shard-00-01.ljp40yo.mongodb.net:27017,ac-1wwbplk-shard-00-02.ljp40yo.mongodb.net:27017/task?ssl=true&replicaSet=atlas-blvx9b-shard-0&authSource=admin&appName=Cluster0",
+  process.env.MONGO_URI,
   { serverSelectionTimeoutMS: 30000 }
 )
   .then(() => {
